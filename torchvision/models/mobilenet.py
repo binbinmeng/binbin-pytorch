@@ -16,8 +16,8 @@ class Block(nn.Module):
         self.relu = nn.ReLU(True)
 
     def forward(self, x):
-        out = self.relu(self.bn1(self.conv1(x)))
-        out = self.relu(self.bn2(self.conv2(out)))
+        out = self.relu(self.bn1(self.conv1(x))) #CBA
+        out = self.relu(self.bn2(self.conv2(out))) #CBA
         return out
 
 class MobileNetV1(nn.Module):
