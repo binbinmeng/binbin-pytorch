@@ -15,7 +15,9 @@ import torch.utils.data.distributed
 import torchvision.transforms as transforms
 import torchvision.datasets as datasets
 import torchvision.models as models
+from lossfunctions import *
 from mixedprecisions.fp16util import *
+
 
 model_names = sorted(name for name in models.__dict__
                      if name.islower() and not name.startswith("__")
@@ -124,8 +126,8 @@ def main():
             param_copy = list(model.parameters())
 
     # define loss function (criterion) and optimizer
-    criterion = nn.CrossEntropyLoss().cuda()
-
+    #criterion = nn.CrossEntropyLoss().cuda()
+    criterion = FocalLoss().cuda()
     optimizer = torch.optim.SGD(param_copy, args.lr,
                                 momentum=args.momentum,
                                 weight_decay=args.weight_decay)
