@@ -1,7 +1,9 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-
+'''
+https://github.com/Marcovaldong/LightModels.git
+'''
 class BasicBlock(nn.Module):
     def __init__(self, in_channels, channels, stride=1):
         super(BasicBlock, self).__init__()

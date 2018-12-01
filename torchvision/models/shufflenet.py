@@ -2,6 +2,10 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+'''
+https://github.com/Marcovaldong/LightModels.git
+'''
+
 class ShuffleBlock(nn.Module):
     def __init__(self, groups):
         super(ShuffleBlock, self).__init__()

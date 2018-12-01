@@ -1,3 +1,9 @@
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+'''
+https://github.com/Marcovaldong/LightModels.git
+'''
 class Bottleneck(nn.Module):
     def __init__(self, in_channels, out_channels, stride=1, splits_left=2, groups=2):
         super(Bottleneck, self).__init__()
