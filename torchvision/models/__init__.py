@@ -82,3 +82,7 @@ from .vgg import *
 from .squeezenet import *
 from .inception import *
 from .densenet import *
+from .mobilenet import *
+from .shufflenet import *
+from .shufflenetv2 import *
+from .senet import *
