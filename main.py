@@ -15,7 +15,7 @@ import torch.utils.data.distributed
 import torchvision.transforms as transforms
 import torchvision.datasets as datasets
 import torchvision.models as models
-from fp16util import *
+from mixedprecisions.fp16util import *
 
 model_names = sorted(name for name in models.__dict__
                      if name.islower() and not name.startswith("__")
