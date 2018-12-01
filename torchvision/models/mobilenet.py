@@ -25,10 +25,10 @@ class MobileNetV1(nn.Module):
     cfg = [64, (128, 2), 128, (256, 2), 256, (512, 2), 512, 512, 512, 512, 512, (1204, 2), 1024]
     def __init__(self, num_classes=1000):
         super(MobileNetV1, self).__init__()
-        self.conv1 = nn.Conv2d(3, 32, kernel_size=3, stride=1, padding=1, bias=False)
+        self.conv1 = nn.Conv2d(3, 32, kernel_size=3, stride=2, padding=1, bias=False)#
         self.bn1 = nn.BatchNorm2d(32)
         self.layers = self._make_layers(in_planes=32)
-        self.avg_pool = nn.AvgPool2d(2, 2)
+        self.avg_pool = nn.AvgPool2d(7, 7)
         self.linear = nn.Linear(1024, num_classes)
         self.relu = nn.ReLU(True)
 
@@ -50,7 +50,7 @@ class MobileNetV1(nn.Module):
         return out
 
     def name(self):
-        return 'MobileNet'
+        return 'MobileNetV1'
 
 def mobilenet1_0(pretrained=False, **kwargs):
     model = MobileNetV1(**kwargs)
@@ -125,6 +125,7 @@ class MobileNetV2(nn.Module):
         return nn.Sequential(*layers)
 
     def forward(self, x):
+        print(x.size())
         out = self.relu(self.bn1(self.conv1(x)))
         out = self.layer1(out)
         out = self.layer2(out)
