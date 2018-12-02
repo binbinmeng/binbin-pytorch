@@ -4,7 +4,7 @@ import torch.nn as nn
 
 class CustomizedCrossEntropyLoss(nn.Module):
     def __init__(self, weight):
-        super(customLoss, self).__init__()
+        super(CustomizedCrossEntropyLoss, self).__init__()
         self.softmax = nn.Softmax(dim=1)
         self.weight = weight
 
@@ -16,9 +16,11 @@ class CustomizedCrossEntropyLoss(nn.Module):
 
         # nn.CrossEntropyLoss
         # combines nn.LogSoftmax() and nn.NLLLoss()
-        outputs = softmax(outputs)
+        outputs = self.softmax(outputs)
+
         self.weight = self.weight.expand_as(outputs)
         loss = -targets_onehot.float() * torch.log(outputs)
+ 
         return torch.mean(self.weight * loss)
 
 
