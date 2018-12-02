@@ -3,7 +3,7 @@ import os
 import numpy as np
 import cv2
 import numba as nb
-from utils impor util
+from utils import util
 
 
 def gen_pnet_train_data(store_pnet_data_dir,anno_file,prefix):
