@@ -1,7 +1,7 @@
 
 import torch
 import torch.nn as nn
-
+import torch.nn.functional as F
 class CustomizedCrossEntropyLoss(nn.Module):
     def __init__(self, weight):
         super(CustomizedCrossEntropyLoss, self).__init__()
@@ -20,9 +20,16 @@ class CustomizedCrossEntropyLoss(nn.Module):
 
         self.weight = self.weight.expand_as(outputs)
         loss = -targets_onehot.float() * torch.log(outputs)
- 
+
         return torch.mean(self.weight * loss)
 
+class CrossEntropyLoss2d(nn.Module):
+    def __init__(self, weight=None, size_average=True):
+        super(CrossEntropyLoss2d, self).__init__()
+        self.nll_loss = nn.NLLLoss2d(weight, size_average)
+
+    def forward(self, inputs, targets):
+        return self.nll_loss(F.log_softmax(inputs), targets)
 
 # define CrossEntropyLoss with weights
 weight = torch.Tensor([1, 5, 10])
@@ -30,10 +37,13 @@ weight = torch.Tensor([1, 5, 10])
 outputs = torch.Tensor([[0.9, 0.5, 0.05], [0.01, 0.2, 0.7]])
 targets = torch.Tensor([0, 1]).long()
 criterion = nn.CrossEntropyLoss(weight=weight)
-custom_criterion = CustomizedCrossEntropyLoss(weight=weight)
+custom_criterion1 = CustomizedCrossEntropyLoss(weight=weight)
+custom_criterion2 = CrossEntropyLoss2d(weight=weight)
 
 # run metrics
 loss = criterion(outputs, targets)
-custom_loss = custom_criterion(outputs, targets)
+custom_loss1 = custom_criterion1(outputs, targets)
+custom_loss2 = custom_criterion2(outputs, targets)
 print ('official loss: ', loss.item())
-print ('custom loss:   ', custom_loss.item())
+print ('custom loss1:   ', custom_loss1.item())
+print ('custom loss2:   ', custom_loss2.item())
