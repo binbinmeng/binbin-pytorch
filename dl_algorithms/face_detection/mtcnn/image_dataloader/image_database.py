@@ -1,7 +1,7 @@
 import numpy as np
-
+import os
 class ImageDataBase(object):
-    def __init__(self):
+    def __init__(self, image_annotation_file, prefix_path='', mode='train'):
         self.prefix_path = prefix_path
         self.image_annotation_file = image_annotation_file
         self.classes = ['__background__', 'face']

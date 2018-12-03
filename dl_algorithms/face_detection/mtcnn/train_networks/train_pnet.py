@@ -2,22 +2,22 @@ import argparse
 import sys
 import os
 #from dface.core.imagedb import ImageDB
-#from dface.train_net.train import train_pnet
+from base_train import train_pnet
 #import dface.config as config
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from image_dataloader import image_database
 import os
 import yaml
-f = open('../gen_train_data/config.yaml', encoding='utf-8')
+f = open('config.yaml', encoding='utf-8')
 configure = yaml.load(f)
 
 
-def train_net(prefix_path, annotation_file, model_store_path,end_epoch=16, frequent=200, lr=0.01, batch_size=128, use_cuda=False):
-    imagedb = image_database.ImageDataBase(prefix_path,annotation_file)
+def train_net(annotation_file, model_store_path,end_epoch=16, frequent=200, lr=0.01, batch_size=128, use_cuda=False):
+    imagedb = image_database.ImageDataBase(annotation_file)
     gt_imdb = imagedb.load_imdb()
     gt_imdb = imagedb.append_flipped_images(gt_imdb)
 
-    #train_pnet(model_store_path=model_store_path, end_epoch=end_epoch, imdb=gt_imdb, batch_size=batch_size, frequent=frequent, base_lr=lr, use_cuda=use_cuda)
+    train_pnet(model_store_path=model_store_path, end_epoch=end_epoch, imdb=gt_imdb, batch_size=batch_size, frequent=frequent, base_lr=lr, use_cuda=use_cuda)
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Train PNet',
@@ -38,15 +38,17 @@ def parse_args():
                         default=configure["TRAIN_BATCH_SIZE"], type=int)
     parser.add_argument('--gpu', dest='use_cuda', help='train with gpu',
                         default=configure["USE_CUDA"], type=bool)
-    parser.add_argument('--prefix_path', dest='', help='training data annotation images prefix root path', type=str)
+    parser.add_argument('--prefix_path', dest='', help='training data annotation images prefix root path',
+                        default=configure["PREFIX_PATH"],type=str)
 
     args = parser.parse_args()
+    print(args)
     return args
 
 if __name__ == '__main__':
     args = parse_args()
     print('train Pnet argument:')
     print(args)
-
-    train_net(prefix_path=args.prefix_path,annotation_file=args.annotation_file, model_store_path=args.model_store_path,
+    print(args.annotation_file)
+    train_net(annotation_file=args.annotation_file, model_store_path=args.model_store_path,
                 end_epoch=args.end_epoch, frequent=args.frequent, lr=args.lr, batch_size=args.batch_size, use_cuda=args.use_cuda)
