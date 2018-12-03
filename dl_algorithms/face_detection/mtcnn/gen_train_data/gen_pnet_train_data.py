@@ -1,10 +1,16 @@
 import argparse
 import os
+import sys
 import numpy as np
 import cv2
 import numba as nb
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from utils import util
+import yaml
 
-
+f = open('config.yaml', encoding='utf-8')
+configure = yaml.load(f)
+#print(configure)
 def gen_pnet_train_data(store_pnet_data_dir,anno_file,prefix):
     neg_save_dir = os.path.join(store_pnet_data_dir, "12/negative")
     pos_save_dir = os.path.join(store_pnet_data_dir, "12/positive")
@@ -18,9 +24,9 @@ def gen_pnet_train_data(store_pnet_data_dir,anno_file,prefix):
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
 
-    post_save_file = os.path.join(config.ANNO_STORE_DIR, config.PNET_POSTIVE_ANNO_FILENAME)
-    neg_save_file = os.path.join(config.ANNO_STORE_DIR, config.PNET_NEGATIVE_ANNO_FILENAME)
-    part_save_file = os.path.join(config.ANNO_STORE_DIR, config.PNET_PART_ANNO_FILENAME)
+    post_save_file = os.path.join(configure["ANNO_STORE_DIR"], configure["PNET_POSTIVE_ANNO_FILENAME"])
+    neg_save_file = os.path.join(configure["ANNO_STORE_DIR"], configure["PNET_NEGATIVE_ANNO_FILENAME"])
+    part_save_file = os.path.join(configure["ANNO_STORE_DIR"], configure["PNET_PART_ANNO_FILENAME"])
 
     f1_post = open(post_save_file, 'w')
     f2_neg = open(neg_save_file, 'w')
@@ -158,7 +164,7 @@ def parse_args():
                         help='face train data temporary folder,include 12,24,48/postive,negative,part,landmark',
                         default='../data/wider/', type=str)
     parser.add_argument('--anno_file', dest='annotation_file', help='wider face original annotation file',
-                        default=os.path.join(config.ANNO_STORE_DIR,"wider_origin_anno.txt"), type=str)
+                        default=os.path.join(configure["ANNO_STORE_DIR"],"wider_origin_anno.txt"), type=str)
     parser.add_argument('--prefix_path', dest='prefix_path', help='annotation file image prefix root path',
                         default='', type=str)
 
@@ -166,5 +172,7 @@ def parse_args():
     return args
 
 if __name__ == '__main__':
+    print(configure["ANNO_STORE_DIR"])
     args = parse_args()
+    
     gen_pnet_train_data(args.traindata_store,args.annotation_file,args.prefix_path)
