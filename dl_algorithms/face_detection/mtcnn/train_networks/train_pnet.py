@@ -12,9 +12,8 @@ f = open('../gen_train_data/config.yaml', encoding='utf-8')
 configure = yaml.load(f)
 
 
-def train_net(annotation_file, model_store_path,
-                end_epoch=16, frequent=200, lr=0.01, batch_size=128, use_cuda=False):
-    imagedb = image_database.ImageDataBase(annotation_file)
+def train_net(prefix_path, annotation_file, model_store_path,end_epoch=16, frequent=200, lr=0.01, batch_size=128, use_cuda=False):
+    imagedb = image_database.ImageDataBase(prefix_path,annotation_file)
     gt_imdb = imagedb.load_imdb()
     gt_imdb = imagedb.append_flipped_images(gt_imdb)
 
@@ -49,5 +48,5 @@ if __name__ == '__main__':
     print('train Pnet argument:')
     print(args)
 
-    train_net(annotation_file=args.annotation_file, model_store_path=args.model_store_path,
+    train_net(prefix_path=args.prefix_path,annotation_file=args.annotation_file, model_store_path=args.model_store_path,
                 end_epoch=args.end_epoch, frequent=args.frequent, lr=args.lr, batch_size=args.batch_size, use_cuda=args.use_cuda)
