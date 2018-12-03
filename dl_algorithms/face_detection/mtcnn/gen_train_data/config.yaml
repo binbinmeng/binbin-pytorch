@@ -1,6 +1,6 @@
 MODEL_STORE_DIR : "/workspace/binbin-pytorch/dl_algorithms/face_detection/mtcnn/gen_train_data#/train_data/model_store"
 
-ANNO_STORE_DIR : "/workspace/binbin-pytorch/dl_algorithms/face_detection/mtcnn/gen_train_data/train_data/anno_store"
+ANNO_STORE_DIR : "/workspace/binbin-pytorch/dl_algorithms/face_detection/mtcnn/gen_train_data/train_data/mtcnn_anno"
 
 LOG_STORE_DIR : "/workspace/binbin-pytorch/dl_algorithms/face_detection/mtcnn/gen_train_data/train_data/log"
 

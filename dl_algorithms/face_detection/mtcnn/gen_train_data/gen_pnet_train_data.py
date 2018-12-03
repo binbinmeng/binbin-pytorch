@@ -15,7 +15,7 @@ def gen_pnet_train_data(store_pnet_data_dir,anno_file,prefix):
     neg_save_dir = os.path.join(store_pnet_data_dir, "12/negative")
     pos_save_dir = os.path.join(store_pnet_data_dir, "12/positive")
     part_save_dir = os.path.join(store_pnet_data_dir, "12/part")
-    print(neg_save_dir)
+    #print(neg_save_dir)
     # create the three dir
     for dir_path in [neg_save_dir, pos_save_dir, part_save_dir]:
         if not os.path.exists(dir_path):
@@ -28,9 +28,12 @@ def gen_pnet_train_data(store_pnet_data_dir,anno_file,prefix):
     post_save_file = os.path.join(configure["ANNO_STORE_DIR"], configure["PNET_POSTIVE_ANNO_FILENAME"])
     neg_save_file = os.path.join(configure["ANNO_STORE_DIR"], configure["PNET_NEGATIVE_ANNO_FILENAME"])
     part_save_file = os.path.join(configure["ANNO_STORE_DIR"], configure["PNET_PART_ANNO_FILENAME"])
-    print(post_save_file)
-    print(configure["ANNO_STORE_DIR"])
-    print(configure["PNET_POSTIVE_ANNO_FILENAME"])
+    #print(post_save_file)
+    #print(configure["ANNO_STORE_DIR"])
+    #print(configure["PNET_POSTIVE_ANNO_FILENAME"])
+    if not os.path.exists(configure["ANNO_STORE_DIR"]):
+        os.makedirs(configure["ANNO_STORE_DIR"])
+
     f1_post = open(post_save_file, 'w')
     f2_neg = open(neg_save_file, 'w')
     f3_part = open(part_save_file, 'w')
@@ -56,7 +59,7 @@ def gen_pnet_train_data(store_pnet_data_dir,anno_file,prefix):
          
         #if img is None:
         #    continue
-        print("successfully open image ", image_path)
+        #print("successfully open image ", image_path)
         post_idx = 0
         neg_idx = 0
         det_idx = 0
@@ -66,6 +69,7 @@ def gen_pnet_train_data(store_pnet_data_dir,anno_file,prefix):
             print(idx, "images finish generation")
 
         height, width, channel = img.shape
+        print(height, width, channel)
         neg_num = 0  # static negative image num random generated
         while neg_num < 50:
             size = np.random.randint(12, min(width, height) / 2)  # random generate a size
@@ -119,9 +123,12 @@ def gen_pnet_train_data(store_pnet_data_dir,anno_file,prefix):
                 size = np.random.randint(int(min(w, h) * 0.8), np.ceil(1.25 * max(w, h)))
 
                 # delta here is the offset of box center
-                delta_x = np.random.randint(-w * 0.2, w * 0.2)
-                delta_y = np.random.randint(-h * 0.2, h * 0.2)
-
+                #print(-w*0.2,w*0.2)
+                delta_x = (-w*0.2) + (0.4*w)*np.random.random()
+                delta_y = (-h*0.2) + (0.4*h)*np.random.random()
+                #delta_x = np.random.randint(-w * 0.2, w * 0.2)
+                #delta_y = np.random.randint(-h * 0.2, h * 0.2)
+                print(delta_x,delta_y)
                 nx1 = max(x1 + w / 2 + delta_x - size / 2, 0)
                 ny1 = max(y1 + h / 2 + delta_y - size / 2, 0)
                 nx2 = nx1 + size
