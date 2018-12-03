@@ -1,8 +1,8 @@
-MODEL_STORE_DIR : os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+"/model_store"
+MODEL_STORE_DIR : "/workspace/binbin-pytorch/dl_algorithms/face_detection/mtcnn/gen_train_data#/train_data/model_store"
 
-ANNO_STORE_DIR : os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+"/anno_store"
+ANNO_STORE_DIR : "/workspace/binbin-pytorch/dl_algorithms/face_detection/mtcnn/gen_train_data/train_data/anno_store"
 
-LOG_STORE_DIR : os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+"/log"
+LOG_STORE_DIR : "/workspace/binbin-pytorch/dl_algorithms/face_detection/mtcnn/gen_train_data/train_data/log"
 
 
 USE_CUDA : True

@@ -15,6 +15,7 @@ def gen_pnet_train_data(store_pnet_data_dir,anno_file,prefix):
     neg_save_dir = os.path.join(store_pnet_data_dir, "12/negative")
     pos_save_dir = os.path.join(store_pnet_data_dir, "12/positive")
     part_save_dir = os.path.join(store_pnet_data_dir, "12/part")
+    print(neg_save_dir)
     # create the three dir
     for dir_path in [neg_save_dir, pos_save_dir, part_save_dir]:
         if not os.path.exists(dir_path):
@@ -27,7 +28,9 @@ def gen_pnet_train_data(store_pnet_data_dir,anno_file,prefix):
     post_save_file = os.path.join(configure["ANNO_STORE_DIR"], configure["PNET_POSTIVE_ANNO_FILENAME"])
     neg_save_file = os.path.join(configure["ANNO_STORE_DIR"], configure["PNET_NEGATIVE_ANNO_FILENAME"])
     part_save_file = os.path.join(configure["ANNO_STORE_DIR"], configure["PNET_PART_ANNO_FILENAME"])
-
+    print(post_save_file)
+    print(configure["ANNO_STORE_DIR"])
+    print(configure["PNET_POSTIVE_ANNO_FILENAME"])
     f1_post = open(post_save_file, 'w')
     f2_neg = open(neg_save_file, 'w')
     f3_part = open(part_save_file, 'w')
@@ -46,14 +49,14 @@ def gen_pnet_train_data(store_pnet_data_dir,anno_file,prefix):
         boxes = np.array(bbox, dtype=np.int32).reshape(-1, 4)
 
         print(image_path)
-        if image_path is None:
-            continue
+        #if image_path is None:
+        #    continue
 
         img = cv2.imread(image_path)
-
-        if img is None:
-            continue
-
+         
+        #if img is None:
+        #    continue
+        print("successfully open image ", image_path)
         post_idx = 0
         neg_idx = 0
         det_idx = 0
@@ -63,7 +66,6 @@ def gen_pnet_train_data(store_pnet_data_dir,anno_file,prefix):
             print(idx, "images finish generation")
 
         height, width, channel = img.shape
-
         neg_num = 0  # static negative image num random generated
         while neg_num < 50:
             size = np.random.randint(12, min(width, height) / 2)  # random generate a size
@@ -147,6 +149,7 @@ def gen_pnet_train_data(store_pnet_data_dir,anno_file,prefix):
                 elif util.IoU(crop_box, box_) >= 0.4:
                     save_file = os.path.join(part_save_dir, "%s_part.jpg" % det_idx)
                     f3_part.write(save_file + ' -1 %.2f %.2f %.2f %.2f\n' % (offset_x1, offset_y1, offset_x2, offset_y2))
+                    print(save_file)
                     cv2.imwrite(save_file, resized_im)
                     det_idx += 1
 
@@ -172,7 +175,7 @@ def parse_args():
     return args
 
 if __name__ == '__main__':
-    print(configure["ANNO_STORE_DIR"])
+    #print(configure["ANNO_STORE_DIR"])
     args = parse_args()
-    
+    print(args.traindata_store,args.annotation_file,args.prefix_path)
     gen_pnet_train_data(args.traindata_store,args.annotation_file,args.prefix_path)
