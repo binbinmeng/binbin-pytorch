@@ -1,26 +1,38 @@
-
+import os
+import sys
+import numpy as np
+import cv2
+import numba as nb
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import argparse
 
 import cv2
 import numpy as np
-from mtcnn_detector import MtcnnDetector, create_mtcnn_net
+from mtcnn_detector import detect #MtcnnDetector, create_mtcnn_net
 #from dface.core.imagedb import ImageDB
+from image_dataloader import image_database
+
 #from dface.core.image_reader import TestImageLoader
 import time
 import os
 # import cPickle #python2 package
 import pickle as pk
-from dface.core.utils import convert_to_square, IoU
-import dface.config as config
+#from dface.core.utils import convert_to_square, IoU
+#import dface.config as config
 #import dface.core.vision as vision
 
+from utils import util
+import yaml
+
+f = open('config.yaml', encoding='utf-8')
+Configure = yaml.load(f)
 
 def gen_rnet_data(data_dir, anno_file, pnet_model_file, prefix_path='', use_cuda=True, vis=False):
 
     pnet, _, _ = create_mtcnn_net(p_model_path=pnet_model_file, use_cuda=use_cuda)
     mtcnn_detector = MtcnnDetector(pnet=pnet,min_face_size=12)
 
-    imagedb = ImageDB(anno_file,mode="test",prefix_path=prefix_path)
+    imagedb = image_database.(anno_file,mode="test",prefix_path=prefix_path)
     imdb = imagedb.load_imdb()
     image_reader = TestImageLoader(imdb,1,False)
 
@@ -49,7 +61,7 @@ def gen_rnet_data(data_dir, anno_file, pnet_model_file, prefix_path='', use_cuda
         batch_idx += 1
 
     # save_path = model_store_path()
-    save_path = config.MODEL_STORE_DIR
+    save_path = configures["MODEL_STORE_DIR"]
 
     if not os.path.exists(save_path):
         os.mkdir(save_path)
