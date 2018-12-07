@@ -2,7 +2,7 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 #from dface.core.image_reader import TrainImageReader
-from image_dataloader import image_converter
+from image_dataloader import image_converter, image_loader
 import datetime
 import os
 from models import PNet,RNet,ONet,LossFn
@@ -11,6 +11,21 @@ from torch.autograd import Variable
 #import dface.core.image_tools as image_tools
 import torch.nn.parallel
 import torch.backends.cudnn as cudnn
+
+def compute_accuracy(prob_cls, gt_cls):
+    prob_cls = torch.squeeze(prob_cls)
+    gt_cls = torch.squeeze(gt_cls)
+
+    #we only need the detection which >= 0
+    mask = torch.ge(gt_cls,0)
+    #get valid element
+    valid_gt_cls = torch.masked_select(gt_cls,mask)
+    valid_prob_cls = torch.masked_select(prob_cls,mask)
+    size = min(valid_gt_cls.size()[0], valid_prob_cls.size()[0])
+    prob_ones = torch.ge(valid_prob_cls,0.6).float()
+    right_ones = torch.eq(prob_ones,valid_gt_cls).float()
+
+    return torch.div(torch.mul(torch.sum(right_ones),float(1.0)),float(size))
 
 def train_pnet(model_store_path, end_epoch,imdb,
               batch_size,frequent=50,base_lr=0.01,use_cuda=True):
@@ -31,7 +46,7 @@ def train_pnet(model_store_path, end_epoch,imdb,
    
     optimizer = torch.optim.Adam(net.parameters(), lr=base_lr)
 
-    train_data=TrainImageReader(imdb,12,batch_size,shuffle=True)
+    train_data=image_loader.TrainImageReader(imdb,12,batch_size,shuffle=True)
 
 
     for cur_epoch in range(1,end_epoch+1):

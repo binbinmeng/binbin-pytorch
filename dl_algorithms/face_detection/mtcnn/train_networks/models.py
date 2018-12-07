@@ -18,7 +18,7 @@ class LossFn:
         self.land_factor = landmark_factor
         self.loss_cls = nn.BCELoss()
         self.loss_box = nn.MSELoss()
-        self.loss_landmark = nn.MSELoss()
+        #self.loss_landmark = nn.MSELoss()
 
 
     def cls_loss(self,gt_label,pred_label):
