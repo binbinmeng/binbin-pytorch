@@ -8,24 +8,25 @@ from torch.autograd.variable import Variable
 import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from train_networks.models import PNet,RNet,ONet
+from train_networks import models#PNet,RNet,ONet
 import utils as util
-from image_dataloader import image_converter, image_loader
+from image_dataloader import image_converter, image_loader, image_tools
 #import image_tools as image_tools
 
 
 def create_mtcnn_net(p_model_path=None, r_model_path=None, o_model_path=None, use_cuda=True):
 
     pnet, rnet, onet = None, None, None
-
+    #print(torch.load(p_model_path))
     if p_model_path is not None:
-        pnet = PNet(use_cuda=use_cuda)       
+        pnet = models.PNet(use_cuda=use_cuda)       
         if(use_cuda):
+            #print("use cuda ...")
             pnet = torch.nn.DataParallel(pnet,device_ids=[0]) #slove load pretrained error
             pnet.load_state_dict(torch.load(p_model_path))
             #pnet.cuda()
             pnet = pnet.cuda()
-            #pnet = torch.nn.DataParallel(net, device_ids=range(torch.cuda.device_count()))
+            #pnet = torch.nn.DataParallel(pnet, device_ids=range(torch.cuda.device_count()))
             cudnn.benchmark = True
         else:
             # forcing all GPU tensors to be in CPU while loading
@@ -33,7 +34,7 @@ def create_mtcnn_net(p_model_path=None, r_model_path=None, o_model_path=None, us
         pnet.eval()
 
     if r_model_path is not None:
-        rnet = RNet(use_cuda=use_cuda)
+        rnet = models.RNet(use_cuda=use_cuda)
         if (use_cuda):
             rnet = torch.nn.DataParallel(rnet,device_ids=[0])
             rnet.load_state_dict(torch.load(r_model_path))
@@ -45,7 +46,7 @@ def create_mtcnn_net(p_model_path=None, r_model_path=None, o_model_path=None, us
         rnet.eval()
 
     if o_model_path is not None:
-        onet = ONet(use_cuda=use_cuda)
+        onet = models.ONet(use_cuda=use_cuda)
         if (use_cuda):
             onet = torch.nn.DataParallel(onet,device_ids=[0])
             onet.load_state_dict(torch.load(o_model_path))
@@ -296,7 +297,7 @@ class MtcnnDetector(object):
 
             if boxes.size == 0:
                 continue
-            keep = utils.nms(boxes[:, :5], 0.5, 'Union')
+            keep = util.torch_nms(boxes[:, :5], 0.5, 'Union')
             boxes = boxes[keep]
             all_boxes.append(boxes)
 
@@ -306,7 +307,7 @@ class MtcnnDetector(object):
         all_boxes = np.vstack(all_boxes)
 
         # merge the detection from first stage
-        keep = utils.nms(all_boxes[:, 0:5], 0.7, 'Union')
+        keep = util.torch_nms(all_boxes[:, 0:5], 0.7, 'Union')
         all_boxes = all_boxes[keep]
         # boxes = all_boxes[:, :5]
 

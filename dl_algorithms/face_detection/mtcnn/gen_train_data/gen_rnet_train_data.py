@@ -1,3 +1,4 @@
+
 import os
 import sys
 import numpy as np
@@ -8,9 +9,9 @@ import argparse
 
 import cv2
 import numpy as np
-from mtcnn_detector import detect #MtcnnDetector, create_mtcnn_net
+from mtcnn_detector.detect import MtcnnDetector, create_mtcnn_net
 #from dface.core.imagedb import ImageDB
-from image_dataloader import image_database
+from image_dataloader import *#image_database
 
 #from dface.core.image_reader import TestImageLoader
 import time
@@ -25,14 +26,14 @@ from utils import util
 import yaml
 
 f = open('config.yaml', encoding='utf-8')
-Configure = yaml.load(f)
+configures= yaml.load(f)
 
 def gen_rnet_data(data_dir, anno_file, pnet_model_file, prefix_path='', use_cuda=True, vis=False):
 
     pnet, _, _ = create_mtcnn_net(p_model_path=pnet_model_file, use_cuda=use_cuda)
     mtcnn_detector = MtcnnDetector(pnet=pnet,min_face_size=12)
 
-    imagedb = image_database.(anno_file,mode="test",prefix_path=prefix_path)
+    imagedb = ImageDataBase(anno_file,mode="test",prefix_path=prefix_path)
     imdb = imagedb.load_imdb()
     image_reader = TestImageLoader(imdb,1,False)
 
@@ -47,6 +48,7 @@ def gen_rnet_data(data_dir, anno_file, pnet_model_file, prefix_path='', use_cuda
         t = time.time()
 
         boxes, boxes_align = mtcnn_detector.detect_pnet(im=im)
+        print("finish detect images ...")
         if boxes_align is None:
             all_boxes.append(np.array([]))
             batch_idx += 1
@@ -62,7 +64,7 @@ def gen_rnet_data(data_dir, anno_file, pnet_model_file, prefix_path='', use_cuda
 
     # save_path = model_store_path()
     save_path = configures["MODEL_STORE_DIR"]
-
+    print(save_path)
     if not os.path.exists(save_path):
         os.mkdir(save_path)
 
@@ -72,7 +74,7 @@ def gen_rnet_data(data_dir, anno_file, pnet_model_file, prefix_path='', use_cuda
 
 
     #save_file = "/workspace/mtcnn/DFace/model_store/detections_1532045514.pkl"
-    #gen_rnet_sample_data(data_dir, anno_file, save_file, prefix_path)
+    gen_rnet_sample_data(data_dir, anno_file, save_file, prefix_path)
 
 
 def gen_rnet_sample_data(data_dir, anno_file, det_boxs_file, prefix_path):
@@ -109,7 +111,8 @@ def gen_rnet_sample_data(data_dir, anno_file, det_boxs_file, prefix_path):
         im_idx_list.append(im_idx)
         gt_boxes_list.append(boxes)
 
-    save_path = config.ANNO_STORE_DIR
+    save_path = configures["ANNO_STORE_DIR"]
+
     if not os.path.exists(save_path):
         os.makedirs(save_path)
 
@@ -211,15 +214,15 @@ def parse_args():
     parser = argparse.ArgumentParser(description='Test mtcnn',
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument('--dface_traindata_store', dest='traindata_store',
+    parser.add_argument('--face_traindata_store', dest='traindata_store',
                         help='dface train data temporary folder,include 12,24,48/postive,negative,part,landmark',
                         default='../data/wider/', type=str)
-    parser.add_argument('--anno_file', dest='annotation_file', help='wider face original annotation file',
-                        default=os.path.join(config.ANNO_STORE_DIR, "wider_origin_anno.txt"), type=str)
-    parser.add_argument('--pmodel_file', dest='pnet_model_file', help='PNet model file path',
+    parser.add_argument('--original_anno_file', dest='annotation_file', help='wider face original annotation file',
+                        default=os.path.join(configures["ANNO_STORE_DIR"], "wider_origin_anno.txt"), type=str)
+    parser.add_argument('--pnet_model_file', dest='pnet_model_file', help='PNet model file path',
                         default='/idata/workspace/dface/model_store/pnet_epoch.pt', type=str)
     parser.add_argument('--gpu', dest='use_cuda', help='with gpu',
-                        default=config.USE_CUDA, type=bool)
+                        default=configures["USE_CUDA"], type=bool)
     parser.add_argument('--prefix_path', dest='prefix_path', help='annotation file image prefix root path',
                         default='', type=str)
 
